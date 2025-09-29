@@ -1,0 +1,26 @@
+{
+  "name": "Gps_interpilation_path_regulation",
+  "version": "1.0.0",
+  "description": "library for gps interpolation and path reg== getting command roll",
+  "keywords": "UAV",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/Matic223/sepride.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Matic Dreu",
+      "email": "matic.dreu@student.um.si"
+      
+    }
+  ],
+  "license": "Fu",
+  "homepage": "nimam",
+  "dependencies": {
+    "ownername/print": "~1.3.0"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}

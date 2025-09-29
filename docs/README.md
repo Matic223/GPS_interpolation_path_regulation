@@ -1,0 +1,1 @@
+dodajaj tekom pisanja main 
