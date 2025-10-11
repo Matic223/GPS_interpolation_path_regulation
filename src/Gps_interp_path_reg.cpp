@@ -9,7 +9,7 @@
 #define pi2 2*3.141592653589793
 #define DEG2RAD (pi / 180.0)
 //////////////////////////////define za L0/////////////////////////////////////
-#define g 8.91
+#define g 9.81
 #define Max_roll 30
 double phi_cmd;
 //int current_wp = 0;  // start at first leg
