@@ -289,14 +289,22 @@ R=(Va*Va)/(g*tan(Max_roll*DEG2RAD));
 L0=R;
 double c0=B_E-A_E;
 double c1=B_N-A_N;
-t_hat[0] = (c0)/(sqrt((c0*c0)+(c1*c1))); //tangenta na pot
-t_hat[1] = (c1)/(sqrt((c0*c0)+(c1*c1))); //tangenta na pot
+
+// before building t_hat--clampamo vrednost protection bred NaN
+//double dx = B_E - A_E, dy = B_N - A_N;
+double seg = hypot(c0, c1);
+if (seg < 1e-6) { phi_cmd = 0; return; }          // early safe return
+
+t_hat[0] = (c0)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
+t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
 
  // % --- Ground velocity---
     Vg_vec[0] = Va*sin(COG*DEG2RAD);  //zamenjaqmo sin in cos zaradi cog // East component
     Vg_vec[1] = Va*cos(COG*DEG2RAD);   // North component
     
     Vg_norm = sqrt((Vg_vec[0]*Vg_vec[0])+(Vg_vec[1]*Vg_vec[1]));
+// protection pred NaN
+    if (Vg_norm < 0.5) { phi_cmd = 0; return; }       // low speed → no bank
 
     //--- Along-track projection ---
     r[0] = plane_E - A_E;   //vektor r od tocke A do letala
@@ -321,6 +329,9 @@ t_hat[1] = (c1)/(sqrt((c0*c0)+(c1*c1))); //tangenta na pot
         d2 = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
 
         L1 = sqrt((d*d) + (L0*L0));
+
+         if (L1 < 1e-6) { phi_cmd = 0; return; }         // protect alat/L1
+
         T[0] = Q[0] + (L1 * t_hat[0]);  // % reference point offset
         T[1] = Q[1] + (L1 * t_hat[1]);  // % reference point offset
 
@@ -328,6 +339,9 @@ t_hat[1] = (c1)/(sqrt((c0*c0)+(c1*c1))); //tangenta na pot
         // % --- Compute guidance commands ---
     dT[0] = T[0] - plane_E;
     dT[1] = T[1] - plane_N;
+
+    double dTn = hypot(dT[0], dT[1]);
+    if (dTn < 1e-6) { phi_cmd = 0; return; }          // already at T
 
     d_hat[0] = dT[0]/sqrt((dT[0]*dT[0]) + (dT[1]*dT[1]));
     d_hat[1] = dT[1]/sqrt((dT[0]*dT[0]) + (dT[1]*dT[1]));
@@ -346,6 +360,8 @@ t_hat[1] = (c1)/(sqrt((c0*c0)+(c1*c1))); //tangenta na pot
     alat = 2*(Vg_norm*Vg_norm) / L1 * sin(eta);    //  % classic + L0
     
     phi_cmd = atan(alat/g);
+
+    if (!isfinite(phi_cmd)) { phi_cmd = 0; return; }
 
     // limit roll
     if (phi_cmd > Max_roll * DEG2RAD) phi_cmd = Max_roll * DEG2RAD;
