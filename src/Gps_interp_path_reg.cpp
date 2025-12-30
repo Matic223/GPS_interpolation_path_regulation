@@ -377,7 +377,7 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
   }
 
 ////////////////////////end L0 guidence/////////////////////
-double zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG) {
+double zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG1) {
 double values[5];
 double s;
 double e_skalar;
@@ -388,15 +388,17 @@ double t_hat[2];
 double r[2];
 double gamma;
 double alpha;
-double lambda;
+double lambda_zone;
 double R;
 double l0;
 double d_vect[2];
 double d;
 double Q[2];
 double L1_zone;
+double  d1_zone;
+double  d2_zone;
 //MIN turn radius glede na omejotve ter hitrost
-R=(SOG*SOG)/(g*tan(Max_roll*DEG2RAD));
+R=(SOG1*SOG1)/(g*tan(Max_roll*DEG2RAD));
 l0=R;
 
 // before building t_hat--clampamo vrednost protection bred NaN
@@ -429,9 +431,9 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
     // % --- Geometry ---
         gamma = atan2(B_N-A_N, B_E-A_E);
         alpha = atan2(plane_N-A_N, plane_E-A_E);
-        lambda = gamma - alpha;
-        d1 = hypot(plane_E-A_E, plane_N-A_N); //% A->aircraft
-        d2 = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
+        lambda_zone = gamma - alpha;
+        d1_zone = hypot(plane_E-A_E, plane_N-A_N); //% A->aircraft
+        d2_zone = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
 
         L1_zone = sqrt((d*d) + (l0*l0));
 
@@ -441,8 +443,8 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
 
 values[0]=s;
 values[1]=e_skalar;
-values[2]=d1;
-values[3]=d2;
+values[2]=d1_zone;
+values[3]=d2_zone;
 values[4]=L1_zone;
 return values[5];
 }
