@@ -377,8 +377,8 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
   }
 
 ////////////////////////end L0 guidence/////////////////////
-double zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N) {
-double values[2];
+double zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG) {
+double values[5];
 double s;
 double e_skalar;
 double e[2];
@@ -386,7 +386,18 @@ double c0=B_E-A_E;
 double c1=B_N-A_N;
 double t_hat[2];
 double r[2];
-
+double gamma;
+double alpha;
+double lambda;
+double R;
+double l0;
+double d_vect[2];
+double d;
+double Q[2];
+double L1_zone;
+//MIN turn radius glede na omejotve ter hitrost
+R=(SOG*SOG)/(g*tan(Max_roll*DEG2RAD));
+l0=R;
 
 // before building t_hat--clampamo vrednost protection bred NaN
 //double dx = B_E - A_E, dy = B_N - A_N;
@@ -404,9 +415,34 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
     s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
     e[0]= r[0]+t_hat[0]*s;
     e[1]= r[1]+t_hat[1]*s;
-    e_skalar=(e[0]*e[0])+(e[1]*e[1]);
+    e_skalar=sqrt((e[0]*e[0])+(e[1]*e[1]));
+
+    /////////ven iz L0 //////////////
+    Q[0] = A_E + s * t_hat[0];   //closest point on segment
+    Q[1] = A_N + s * t_hat[1];   //closest point on segment
+
+    d_vect[0] = plane_E - Q[0];
+    d_vect[1] = plane_N - Q[1];
+    d = sqrt((d_vect[0]*d_vect[0])+(d_vect[1]*d_vect[1]));
+
+   // % fernandez logivc
+    // % --- Geometry ---
+        gamma = atan2(B_N-A_N, B_E-A_E);
+        alpha = atan2(plane_N-A_N, plane_E-A_E);
+        lambda = gamma - alpha;
+        d1 = hypot(plane_E-A_E, plane_N-A_N); //% A->aircraft
+        d2 = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
+
+        L1_zone = sqrt((d*d) + (l0*l0));
+
+      if (L1_zone < 1e-6) { 
+        L1_zone = 0;
+    }
 
 values[0]=s;
 values[1]=e_skalar;
-return values[2];
+values[2]=d1;
+values[3]=d2;
+values[4]=L1_zone;
+return values[5];
 }
