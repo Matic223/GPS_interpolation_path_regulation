@@ -377,3 +377,36 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
   }
 
 ////////////////////////end L0 guidence/////////////////////
+double zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N) {
+double values[2];
+double s;
+double e_skalar;
+double e[2];
+double c0=B_E-A_E;
+double c1=B_N-A_N;
+double t_hat[2];
+double r[2];
+
+
+// before building t_hat--clampamo vrednost protection bred NaN
+//double dx = B_E - A_E, dy = B_N - A_N;
+double seg = hypot(c0, c1);
+if (seg < 1e-6) { phi_cmd = 0; return; }          // early safe return
+
+t_hat[0] = (c0)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
+t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
+
+ //--- Along-track projection ---
+    r[0] = plane_E - A_E;   //vektor r od tocke A do letala
+    r[1] = plane_N - A_N;
+
+//C = A(1)*B(1) + A(2)*B(2) + A(3)*B(3)
+    s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
+    e[0]= r[0]+t_hat[0]*s;
+    e[1]= r[1]+t_hat[1]*s;
+    e_skalar=(e[0]*e[0])+(e[1]*e[1]);
+
+values[0]=s;
+values[1]=e_skalar;
+return values[2];
+}
