@@ -311,7 +311,12 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
     r[1] = plane_N - A_N;
 
 //C = A(1)*B(1) + A(2)*B(2) + A(3)*B(3)
-    s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
+     //infinite line, torej Q+inf
+    double s_raw = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt  ////infinite line, torej Q+inf
+        // Clamp to the segment [A,B]
+        s = s_raw;
+        if (s < 0.0) s = 0.0;
+        if (s > seg) s = seg;
 
     Q[0] = A_E + s * t_hat[0];   //closest point on segment
     Q[1] = A_N + s * t_hat[1];   //closest point on segment
@@ -332,8 +337,8 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
 
          if (L1 < 1e-6) { phi_cmd = 0; return; }         // protect alat/L1
 
-        T[0] = Q[0] + (L1 * t_hat[0]);  // % reference point offset
-        T[1] = Q[1] + (L1 * t_hat[1]);  // % reference point offset
+        T[0] = Q[0] + (L0 * t_hat[0]);  // % reference point offset
+        T[1] = Q[1] + (L0 * t_hat[1]);  // % reference point offset
 
 
         // % --- Compute guidance commands ---
