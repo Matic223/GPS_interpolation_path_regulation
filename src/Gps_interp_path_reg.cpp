@@ -407,7 +407,7 @@ l0=R;
 //double dx = B_E - A_E, dy = B_N - A_N;
 z.seg = hypot(c0, c1);
 if (z.seg < 1e-6) { 
-    z.seg  = 0; 
+    z.seg  = 1e-6; 
  }          // early safe return
 
 t_hat[0] = (c0)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
@@ -419,13 +419,13 @@ t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
 
 //C = A(1)*B(1) + A(2)*B(2) + A(3)*B(3)
     z.s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
-    e[0]= r[0] - t_hat[0]*s;
-    e[1]= r[1] - t_hat[1]*s;
+    e[0]= r[0] - t_hat[0]*z.s;
+    e[1]= r[1] - t_hat[1]*z.s;
     z.e_skalar=sqrt((e[0]*e[0])+(e[1]*e[1]));
 
     /////////ven iz L0 //////////////
-    Q[0] = A_E + s * t_hat[0];   //closest point on segment
-    Q[1] = A_N + s * t_hat[1];   //closest point on segment
+    Q[0] = A_E + z.s * t_hat[0];   //closest point on segment
+    Q[1] = A_N + z.s * t_hat[1];   //closest point on segment
 
     d_vect[0] = plane_E - Q[0];
     d_vect[1] = plane_N - Q[1];
