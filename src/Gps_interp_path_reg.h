@@ -33,6 +33,15 @@ struct ENU{
     double U[100]; 
    };
 
+   struct ZoneVals {
+  double s;       // along-track projection
+  double e_skalar;       // cross-track distance (>=0)
+  double d1_zone;      // distance to A
+  double d2_zone;      // distance to B
+  double L1_zone; // your zone boundary distance
+  double seg;     // length of segment AB (useful!)
+};
+
 extern GPSdata gpsIZxyz,gpsIZxyzMatlab,gpsdata1;
 extern GPSdata gpsIZxyzCIRC;
 extern GPSdata gpstest;
@@ -78,5 +87,5 @@ void cubic_coeff(double v0, double v1, double d0, double d1,
                  double *c, double *d);
 void L0_guidence(double SOG,double COG,double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N);
 void initReference();
-
+ZoneVals zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG1);
 #endif

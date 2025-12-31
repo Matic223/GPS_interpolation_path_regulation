@@ -377,7 +377,7 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
   }
 
 ////////////////////////end L0 guidence/////////////////////
-double zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG1) {
+ZoneVals zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG1) {
 double values[5];
 double s;
 double e_skalar;
@@ -395,29 +395,33 @@ double d_vect[2];
 double d;
 double Q[2];
 double L1_zone;
-double  d1_zone;
-double  d2_zone;
+double d1_zone;
+double d2_zone;
+
+ZoneVals z{};
 //MIN turn radius glede na omejotve ter hitrost
 R=(SOG1*SOG1)/(g*tan(Max_roll*DEG2RAD));
 l0=R;
 
 // before building t_hat--clampamo vrednost protection bred NaN
 //double dx = B_E - A_E, dy = B_N - A_N;
-double seg = hypot(c0, c1);
-if (seg < 1e-6) { phi_cmd = 0; return; }          // early safe return
+z.seg = hypot(c0, c1);
+if (z.seg < 1e-6) { 
+    z.seg  = 0; 
+ }          // early safe return
 
-t_hat[0] = (c0)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
-t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
+t_hat[0] = (c0)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
+t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
 
  //--- Along-track projection ---
     r[0] = plane_E - A_E;   //vektor r od tocke A do letala
     r[1] = plane_N - A_N;
 
 //C = A(1)*B(1) + A(2)*B(2) + A(3)*B(3)
-    s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
-    e[0]= r[0]+t_hat[0]*s;
-    e[1]= r[1]+t_hat[1]*s;
-    e_skalar=sqrt((e[0]*e[0])+(e[1]*e[1]));
+    z.s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
+    e[0]= r[0] - t_hat[0]*s;
+    e[1]= r[1] - t_hat[1]*s;
+    z.e_skalar=sqrt((e[0]*e[0])+(e[1]*e[1]));
 
     /////////ven iz L0 //////////////
     Q[0] = A_E + s * t_hat[0];   //closest point on segment
@@ -432,19 +436,14 @@ t_hat[1] = (c1)/ seg ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
         gamma = atan2(B_N-A_N, B_E-A_E);
         alpha = atan2(plane_N-A_N, plane_E-A_E);
         lambda_zone = gamma - alpha;
-        d1_zone = hypot(plane_E-A_E, plane_N-A_N); //% A->aircraft
-        d2_zone = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
+        z.d1_zone = hypot(plane_E-A_E, plane_N-A_N); //% A->aircraft
+        z.d2_zone = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
 
-        L1_zone = sqrt((d*d) + (l0*l0));
+        z.L1_zone = sqrt((d*d) + (l0*l0));
 
-      if (L1_zone < 1e-6) { 
-        L1_zone = 0;
+      if (z.L1_zone < 1e-6) { 
+        z.L1_zone = 0;
     }
 
-values[0]=s;
-values[1]=e_skalar;
-values[2]=d1_zone;
-values[3]=d2_zone;
-values[4]=L1_zone;
-return values[5];
+return z;
 }
