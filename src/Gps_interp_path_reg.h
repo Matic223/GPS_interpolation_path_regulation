@@ -40,6 +40,9 @@ struct ENU{
   double d2_zone;      // distance to B
   double L1_zone; // your zone boundary distance
   double seg;     // length of segment AB (useful!)
+  double Q1;
+  double Q2;
+  double s_raw;
 };
 
 extern GPSdata gpsIZxyz,gpsIZxyzMatlab,gpsdata1;

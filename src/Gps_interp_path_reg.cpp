@@ -423,7 +423,12 @@ t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
     r[1] = plane_N - A_N;
 
 //C = A(1)*B(1) + A(2)*B(2) + A(3)*B(3)
-    z.s = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt
+  z.s_raw = r[0]*t_hat[0]+r[1]*t_hat[1];   //skalarni produkt  ////infinite line, torej Q+inf
+        // Clamp to the segment [A,B]
+        z.s = z.s_raw;
+        if (z.s < 0.0) z.s = 0.0;
+        if (z.s > z.seg) z.s = z.seg;
+
     e[0]= r[0] - t_hat[0]*z.s;
     e[1]= r[1] - t_hat[1]*z.s;
     z.e_skalar=sqrt((e[0]*e[0])+(e[1]*e[1]));
@@ -431,7 +436,9 @@ t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
     /////////ven iz L0 //////////////
     Q[0] = A_E + z.s * t_hat[0];   //closest point on segment
     Q[1] = A_N + z.s * t_hat[1];   //closest point on segment
-
+    z.Q1 = Q[0];
+    z.Q2 = Q[1];
+    
     d_vect[0] = plane_E - Q[0];
     d_vect[1] = plane_N - Q[1];
     d = sqrt((d_vect[0]*d_vect[0])+(d_vect[1]*d_vect[1]));
