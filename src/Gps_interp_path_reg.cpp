@@ -460,3 +460,85 @@ t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
 
 return z;
 }
+
+/////////////////////////////guidence to point helper///////////////
+static inline double clampd(double x, double lo, double hi){
+  if (x < lo) return lo;
+  if (x > hi) return hi;
+  return x;
+}
+
+double guidanceToPoint(double SOG, double COG_deg,
+                       double plane_E, double plane_N,
+                       double target_E, double target_N,
+                       double L, double phiMaxRad)
+{
+  // ground velocity unit vector (ENU)
+  double VgE = SOG * sin(COG_deg * DEG2RAD);
+  double VgN = SOG * cos(COG_deg * DEG2RAD);
+  double Vg  = hypot(VgE, VgN);
+  if (Vg < 0.5) return 0.0;
+
+  double dE = target_E - plane_E;
+  double dN = target_N - plane_N;
+  double dn = hypot(dE, dN);
+  if (dn < 1e-6) return 0.0;
+
+  double d_hatE = dE / dn;
+  double d_hatN = dN / dn;
+
+  double v_hatE = VgE / Vg;
+  double v_hatN = VgN / Vg;
+
+  double cross2D = v_hatE * d_hatN - v_hatN * d_hatE;
+  double dot2D   = v_hatE * d_hatE + v_hatN * d_hatN;
+
+  double eta = atan2(cross2D, dot2D);
+  eta = clampd(eta, -M_PI/2, M_PI/2);
+
+  L = fmax(L, 1e-3);
+  double alat = 2.0 * (Vg*Vg) / L * sin(eta);
+
+  double phi = atan(alat / g);
+  if (!isfinite(phi)) phi = 0.0;
+
+  phi = clampd(phi, -phiMaxRad, +phiMaxRad);
+  return phi;
+}
+
+int closestSegmentIndex(double plane_E, double plane_N, int total_wp)
+{
+  int best = 0;
+  double bestD2 = 1e30;
+
+  for (int i = 0; i < total_wp; i++) {
+    int j = (i + 1) % total_wp;
+
+    double AE = enuInterp.E[i], AN = enuInterp.n[i];
+    double BE = enuInterp.E[j], BN = enuInterp.n[j];
+
+    double dx = BE - AE, dy = BN - AN;
+    double seg = hypot(dx, dy);
+    if (seg < 1e-6) continue;
+
+    double tx = dx / seg, ty = dy / seg;
+
+    double rx = plane_E - AE, ry = plane_N - AN;
+    double s_raw = rx*tx + ry*ty;
+    double s = clampd(s_raw, 0.0, seg);
+
+    double QE = AE + s*tx;
+    double QN = AN + s*ty;
+
+    double ex = plane_E - QE;
+    double ey = plane_N - QN;
+    double d2 = ex*ex + ey*ey;
+
+    if (d2 < bestD2) { 
+      bestD2 = d2; 
+      best = i; 
+    }
+  }
+
+  return best;
+}

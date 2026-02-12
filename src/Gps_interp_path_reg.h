@@ -93,4 +93,10 @@ void cubic_coeff(double v0, double v1, double d0, double d1,
 void L0_guidence(double SOG,double COG,double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N);
 void initReference();
 ZoneVals zoneCalc(double plane_E,double plane_N,double A_E,double A_N,double B_E,double B_N,double SOG1);
+static inline double clampd(double x, double lo, double hi);
+double guidanceToPoint(double SOG, double COG_deg,
+                       double plane_E, double plane_N,
+                       double target_E, double target_N,
+                       double L, double phiMaxRad);
+int closestSegmentIndex(double plane_E, double plane_N, int total_wp);                      
 #endif
