@@ -43,6 +43,8 @@ struct ENU{
   double Q1;
   double Q2;
   double s_raw;
+  double L0;
+  double d;
 };
 
 extern GPSdata gpsIZxyz,gpsIZxyzMatlab,gpsdata1;

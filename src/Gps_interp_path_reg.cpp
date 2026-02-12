@@ -407,7 +407,7 @@ ZoneVals z{};
 //MIN turn radius glede na omejotve ter hitrost
 R=(SOG1*SOG1)/(g*tan(Max_roll*DEG2RAD));
 l0=R;
-
+z.L0=R;
 // before building t_hat--clampamo vrednost protection bred NaN
 //double dx = B_E - A_E, dy = B_N - A_N;
 z.seg = hypot(c0, c1);
@@ -442,6 +442,7 @@ t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
     d_vect[0] = plane_E - Q[0];
     d_vect[1] = plane_N - Q[1];
     d = sqrt((d_vect[0]*d_vect[0])+(d_vect[1]*d_vect[1]));
+    z.d=d;
 
    // % fernandez logivc
     // % --- Geometry ---
