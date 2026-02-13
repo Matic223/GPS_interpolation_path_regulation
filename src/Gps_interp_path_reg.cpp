@@ -449,6 +449,7 @@ t_hat[1] = (c1)/ z.seg  ; //tangenta na pot (sqrt((c0*c0)+(c1*c1)))
         gamma = atan2(B_N-A_N, B_E-A_E);
         alpha = atan2(plane_N-A_N, plane_E-A_E);
         lambda_zone = gamma - alpha;
+        z.lambda= lambda_zone;
         z.d1_zone = hypot(plane_E-A_E, plane_N-A_N); //% A->aircraft
         z.d2_zone = hypot(plane_E-B_E, plane_N-B_N); //% B->aircraft
 
@@ -462,7 +463,7 @@ return z;
 }
 
 /////////////////////////////guidence to point helper///////////////
-static inline double clampd(double x, double lo, double hi){
+double clampd(double x, double lo, double hi){
   if (x < lo) return lo;
   if (x > hi) return hi;
   return x;
