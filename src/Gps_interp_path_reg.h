@@ -5,10 +5,11 @@
 #define pi2 2*3.141592653589793
 #define DEG2RAD (pi / 180.0)
 
-#define g 8.91
+#define g 9.81
 #define Max_roll 30
 extern double phi_cmd;
 //extern int current_wp;  // start at first leg
+/*
 extern double d1;
 extern double d2;
 extern double L1;
@@ -16,7 +17,7 @@ extern double lambda;
 extern double SOG;  // ground speed
 extern double COG; // course over ground [deg]
 //extern int total_wp;
-
+*/
 struct GPSdata{
     double lon[100];
     double lat[100];
